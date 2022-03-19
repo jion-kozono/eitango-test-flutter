@@ -35,8 +35,9 @@ Widget wordNumFormField(bool isFirst, TextEditingController mainController,
       if (!isFirst &&
           int.parse(mainController.text) <=
               int.parse(controllerToCompare.text)) {
-        return ('最後の単語番号の方が大きい必要があります');
+        return '最後の単語番号の方が大きい必要があります';
       }
+      return null;
     },
     keyboardType: TextInputType.number,
     inputFormatters: <TextInputFormatter>[
