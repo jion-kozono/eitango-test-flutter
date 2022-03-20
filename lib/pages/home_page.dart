@@ -17,13 +17,17 @@ class _HomePageState extends State<HomePage> {
   final _formKey = GlobalKey<FormState>();
   int initialValue = 1;
   String bookName = "";
-  bool isCheckedWeek = false;
+  bool isCheckedWeak = false;
   late TextEditingController firstNumController =
       TextEditingController(text: "$initialValue");
   late TextEditingController lastNumController =
       TextEditingController(text: "${initialValue + 20}");
 
   List<Word> words = [];
+
+  void changeIsCheckedWeak() {
+    isCheckedWeak = !isCheckedWeak;
+  }
 
   Future<List<String>> getAllBookNames() async {
     List<String> bookNameList = await API.getAllBookNames();
@@ -147,18 +151,7 @@ class _HomePageState extends State<HomePage> {
                               true, firstNumController, lastNumController),
                           wordNumFormField(
                               false, lastNumController, firstNumController),
-                          Row(
-                            children: [
-                              Checkbox(
-                                  value: isCheckedWeek,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      isCheckedWeek = value!;
-                                    });
-                                  }),
-                              const Text("苦手だけ(間違ったままの問題が出題されます。)")
-                            ],
-                          ),
+                          IsWeakCheckField(isCheckedWeek: isCheckedWeak, changeIsCheckedWeak: changeIsCheckedWeak,),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 10.0),
                             child: ElevatedButton(
@@ -190,3 +183,33 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+class IsWeakCheckField extends StatefulWidget {
+  const IsWeakCheckField({required this.isCheckedWeek, required this.changeIsCheckedWeak, Key? key}) : super(key: key);
+  final bool isCheckedWeek;
+  final Function changeIsCheckedWeak;
+
+  @override
+  State<IsWeakCheckField> createState() => _IsWeakCheckFieldState();
+}
+
+class _IsWeakCheckFieldState extends State<IsWeakCheckField> {
+  bool isCheckedWeak = false;
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Checkbox(
+            value: isCheckedWeak,
+            onChanged: (bool? value) {
+              setState(() {
+                isCheckedWeak = value!;
+              });
+              widget.changeIsCheckedWeak();
+            }),
+        const Text("苦手だけ(間違ったままの問題が出題されます。)")
+      ],
+    );
+  }
+}
+
