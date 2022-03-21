@@ -6,20 +6,27 @@ import 'dart:convert';
 class API {
   static Future<List<Word>> getAllWeekWords() async {
     Uri urlWeekWords = Uri.parse('$apiUrl/weekWords/');
-    return await _reqAndRes<List<Word>>(urlWeekWords, "苦手単語の取得に失敗しました。");
+    return await _getWords(urlWeekWords);
   }
 
   static Future<List<String>> getAllBookNames() async {
     Uri urlBooks = Uri.parse('$apiUrl/books/');
-    var res = await _reqAndRes<List<String>>(urlBooks, "参考書の取得に失敗しました。");
-    return res;
+    var res = await http.get(urlBooks);
+    if (res.statusCode == 200) {
+      String responseBody = utf8.decode(res.bodyBytes);
+      print(responseBody);
+      var jsonResponse = json.decode(responseBody).cast<String>();
+      return jsonResponse;
+    } else {
+      throw Exception("参考書の取得に失敗しました。");
+    }
   }
 
-  static Future<void> getTestWords(
+  static Future<List<Word>> getTestWords(
       String bookName, int firstNum, int lastNum, bool isOnlyWeak) async {
-    Uri urlTestWords =
-    Uri.parse('$apiUrl/words/$bookName?first=$firstNum&last=$lastNum&is_only_week=$isOnlyWeak');
-    return await _reqAndRes(urlTestWords, "テスト単語の取得に失敗しました。");
+    Uri urlTestWords = Uri.parse(
+        '$apiUrl/words/$bookName?first=$firstNum&last=$lastNum&is_only_week=$isOnlyWeak');
+    return await _getWords(urlTestWords);
   }
 
   static Future<void> postIsCorrect(isCorrectListOfDict) async {
@@ -27,17 +34,31 @@ class API {
     return await _reqAndRes(urlIsCorrect, "正当を正常に送信できませんでした。");
   }
 
+  static Future<List<Word>> _getWords(Uri url) async{
+    var res = await http.get(url);
+    if (res.statusCode == 200) {
+      String responseBody = utf8.decode(res.bodyBytes);
+      var jsonResponse = json.decode(responseBody);
+      List<Word> words = [];
+      jsonResponse.forEach((wordJson) {
+        Word word = Word.fromJson(wordJson);
+        words.add(word);
+      });
+      return words;
+    } else {
+      throw Exception("テスト単語の取得に失敗しました。");
+    }
+  }
+
   static Future<T> _reqAndRes<T>(Uri url, String exception) async {
     var res = await http.get(url);
-    print(url);
-    if(res.statusCode == 200) {
+    if (res.statusCode == 200) {
       String responseBody = utf8.decode(res.bodyBytes);
+      print(responseBody);
       var jsonResponse = json.decode(responseBody).cast<String>();
       return jsonResponse;
-    }else {
+    } else {
       throw Exception(exception);
     }
   }
 }
-
-

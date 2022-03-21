@@ -1,3 +1,4 @@
+import 'package:eitango_test_flutter/components/MySnackBar.dart';
 import 'package:eitango_test_flutter/components/word_name_form_field.dart';
 import 'package:eitango_test_flutter/constants/device.dart';
 import 'package:eitango_test_flutter/model/word.dart';
@@ -32,48 +33,7 @@ class _HomePageState extends State<HomePage> {
   Future<List<String>> getAllBookNames() async {
     List<String> bookNameList = await API.getAllBookNames();
     bookName = bookNameList[0];
-    bookNameList.add("hogeghohg");
     return bookNameList;
-  }
-
-  Future<List<Word>> getTestWords() async {
-    return [
-      Word(
-          id: "ID:1",
-          word: "apple",
-          meaning: "りんご",
-          bookName: "参考書1",
-          wordNum: 1,
-          isCorrect: IsCorrect.correct),
-      Word(
-          id: "ID:2",
-          word: "grape",
-          meaning: "ぶどう",
-          bookName: "参考書1",
-          wordNum: 2,
-          isCorrect: IsCorrect.correct),
-      Word(
-          id: "ID:2",
-          word: "grape",
-          meaning: "ぶどう",
-          bookName: "参考書1",
-          wordNum: 2,
-          isCorrect: IsCorrect.correct),
-      Word(
-          id: "ID:2",
-          word: "grape",
-          meaning: "ぶどう",
-          bookName: "参考書1",
-          wordNum: 2,
-          isCorrect: IsCorrect.correct),
-      Word(
-          id: "ID:2",
-          word: "grape",
-          meaning: "ぶどう",
-          bookName: "参考書1",
-          wordNum: 2,
-          isCorrect: IsCorrect.correct),
-    ];
   }
 
   @override
@@ -98,11 +58,17 @@ class _HomePageState extends State<HomePage> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10.0),
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => TestPage(words: words)));
+                      onPressed: () async {
+                        words = await API.getAllWeekWords();
+                        if (words.isNotEmpty) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      TestPage(words: words)));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(context, "苦手単語は見つかりません"));
+                        }
                       },
                       child: const Text("全ての苦手単語をテストする"),
                     ),
@@ -151,20 +117,29 @@ class _HomePageState extends State<HomePage> {
                               true, firstNumController, lastNumController),
                           wordNumFormField(
                               false, lastNumController, firstNumController),
-                          IsWeakCheckField(isCheckedWeek: isCheckedWeak, changeIsCheckedWeak: changeIsCheckedWeak,),
+                          IsWeakCheckField(
+                            isCheckedWeek: isCheckedWeak,
+                            changeIsCheckedWeak: changeIsCheckedWeak,
+                          ),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 10.0),
                             child: ElevatedButton(
                                 onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
-                                    words = await getTestWords();
-                                    print(words);
-                                    if (words.length > 0) {
+                                    words = await API.getTestWords(
+                                        bookName,
+                                        int.parse(firstNumController.text),
+                                        int.parse(lastNumController.text),
+                                        isCheckedWeak);
+                                    if (words.isNotEmpty) {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   TestPage(words: words)));
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(mySnackBar(context, "範囲内に単語は見つかりません"));
                                     }
                                   }
                                 },
@@ -185,7 +160,11 @@ class _HomePageState extends State<HomePage> {
 }
 
 class IsWeakCheckField extends StatefulWidget {
-  const IsWeakCheckField({required this.isCheckedWeek, required this.changeIsCheckedWeak, Key? key}) : super(key: key);
+  const IsWeakCheckField(
+      {required this.isCheckedWeek,
+      required this.changeIsCheckedWeak,
+      Key? key})
+      : super(key: key);
   final bool isCheckedWeek;
   final Function changeIsCheckedWeak;
 
@@ -195,6 +174,7 @@ class IsWeakCheckField extends StatefulWidget {
 
 class _IsWeakCheckFieldState extends State<IsWeakCheckField> {
   bool isCheckedWeak = false;
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -212,4 +192,3 @@ class _IsWeakCheckFieldState extends State<IsWeakCheckField> {
     );
   }
 }
-

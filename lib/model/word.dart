@@ -4,7 +4,7 @@ class Word {
   late String meaning;
   late String bookName;
   late int wordNum;
-  late IsCorrect isCorrect;
+  late bool isCorrect;
 
   Word(
       {required this.id,
@@ -13,20 +13,14 @@ class Word {
       required this.bookName,
       required this.wordNum,
       required this.isCorrect});
-}
 
-enum IsCorrect {
-  correct,
-  wrong,
-}
-
-extension IsCorrectExt on IsCorrect {
-  int? get num {
-    switch (this) {
-      case IsCorrect.correct:
-        return 1;
-      case IsCorrect.wrong:
-        return -1;
-    }
+  Word.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    word = json['word'];
+    meaning = json['meaning'];
+    bookName = json['book_name'];
+    wordNum = json['word_num'];
+    isCorrect = json['is_correct'] == 1 ? true : false;
   }
+
 }

@@ -38,7 +38,7 @@ class _TestPageState extends State<TestPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "$index. ${word.meaning} (No.${word.wordNum})",
+                        "${index + 1}. ${word.meaning} (No.${word.wordNum})",
                         style: const TextStyle(fontSize: 16),
                       ),
                       Padding(
