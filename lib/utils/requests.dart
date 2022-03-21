@@ -11,10 +11,11 @@ class API {
 
   static Future<List<String>> getAllBookNames() async {
     Uri urlBooks = Uri.parse('$apiUrl/books/');
-    var res = await http.get(urlBooks);
+    print(urlBooks);
+    var res = await http.get(urlBooks, headers: {'Access-Control-Allow-Origin': '*', "Accept":"application/json"});
+    print(res);
     if (res.statusCode == 200) {
       String responseBody = utf8.decode(res.bodyBytes);
-      print(responseBody);
       var jsonResponse = json.decode(responseBody).cast<String>();
       return jsonResponse;
     } else {
@@ -29,9 +30,14 @@ class API {
     return await _getWords(urlTestWords);
   }
 
-  static Future<void> postIsCorrect(isCorrectListOfDict) async {
-    Uri urlIsCorrect = Uri.parse('$apiUrl/isCorrect');
-    return await _reqAndRes(urlIsCorrect, "正当を正常に送信できませんでした。");
+  static Future<void> postIsCorrect(List<Map<String, dynamic>> isCorrectListOfDict) async {
+    Uri urlIsCorrect = Uri.parse('$apiUrl/isCorrect/');
+    Map<String, String> headers = {'content-type': 'application/json'};
+    String body = json.encode(isCorrectListOfDict);
+    var res = await http.post(urlIsCorrect, headers: headers, body: body);
+    if (res.statusCode != 200) {
+      throw Exception("正当を正常に送信できませんでした。");
+    }
   }
 
   static Future<List<Word>> _getWords(Uri url) async{
@@ -47,18 +53,6 @@ class API {
       return words;
     } else {
       throw Exception("テスト単語の取得に失敗しました。");
-    }
-  }
-
-  static Future<T> _reqAndRes<T>(Uri url, String exception) async {
-    var res = await http.get(url);
-    if (res.statusCode == 200) {
-      String responseBody = utf8.decode(res.bodyBytes);
-      print(responseBody);
-      var jsonResponse = json.decode(responseBody).cast<String>();
-      return jsonResponse;
-    } else {
-      throw Exception(exception);
     }
   }
 }

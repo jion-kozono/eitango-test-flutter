@@ -1,12 +1,22 @@
 import 'package:eitango_test_flutter/constants/device.dart';
 import 'package:flutter/material.dart';
 
-class ResultPage extends StatelessWidget {
-  const ResultPage({Key? key}) : super(key: key);
-  final bool isPerfect = false;
+class ResultPage extends StatefulWidget {
+  const ResultPage(
+      {required this.wrongWords, required this.scoreText, Key? key})
+      : super(key: key);
+  final List<Map<String, dynamic>> wrongWords;
+  final String scoreText;
 
   @override
+  State<ResultPage> createState() => _ResultPageState();
+}
+
+class _ResultPageState extends State<ResultPage> {
+  @override
   Widget build(BuildContext context) {
+    bool isPerfect = widget.wrongWords.isEmpty;
+
     return Scaffold(
         appBar: AppBar(title: const Text("Your Score!")),
         body: Padding(
@@ -24,8 +34,8 @@ class ResultPage extends StatelessWidget {
                   width: DeviceInfo.width(context) * 3 / 4,
                   child: Center(
                       child: Text(
-                    isPerfect ? "全問正解!!" : "1/2点",
-                    style: TextStyle(fontSize: 20),
+                    isPerfect ? "全問正解!!" : widget.scoreText,
+                    style: const TextStyle(fontSize: 20),
                   ))),
               !isPerfect
                   ? Column(children: [
@@ -37,53 +47,8 @@ class ResultPage extends StatelessWidget {
                         padding:
                             const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 30.0),
                         child: Table(
-                          border: TableBorder.all(),
-                          children: const [
-                            TableRow(
-                                decoration: BoxDecoration(color: Colors.grey),
-                                children: [
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(child: Text("あなたの答え")),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(child: Text("英単語")),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(child: Text("意味")),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(child: Text("No.")),
-                                  ),
-                                ]),
-                            TableRow(children: [
-                              Padding(
-                                padding:
-                                EdgeInsets.symmetric(vertical: 8.0),
-                                child: Center(child: Text("apples")),
-                              ),Padding(
-                                padding:
-                                EdgeInsets.symmetric(vertical: 8.0),
-                                child: Center(child: Text("apple")),
-                              ),Padding(
-                                padding:
-                                EdgeInsets.symmetric(vertical: 8.0),
-                                child: Center(child: Text("りんご")),
-                              ),Padding(
-                                padding:
-                                EdgeInsets.symmetric(vertical: 8.0),
-                                child: Center(child: Text("1")),
-                              ),
-                            ]),
-                          ],
-                        ),
+                            border: TableBorder.all(),
+                            children: wrongTableRows(widget.wrongWords)),
                       ),
                       const Text("間違えた問題は繰り返し復讐しましょう。")
                     ])
@@ -92,4 +57,48 @@ class ResultPage extends StatelessWidget {
           )),
         ));
   }
+}
+
+List<TableRow> wrongTableRows(List<Map<String, dynamic>> wrongWords) {
+  List<TableRow> wrongTableRowList = [
+    const TableRow(decoration: BoxDecoration(color: Colors.grey), children: [
+      Padding(
+        padding: EdgeInsets.symmetric(vertical: 8.0),
+        child: Center(child: Text("あなたの答え")),
+      ),
+      Padding(
+        padding: EdgeInsets.symmetric(vertical: 8.0),
+        child: Center(child: Text("英単語")),
+      ),
+      Padding(
+        padding: EdgeInsets.symmetric(vertical: 8.0),
+        child: Center(child: Text("意味")),
+      ),
+      Padding(
+        padding: EdgeInsets.symmetric(vertical: 8.0),
+        child: Center(child: Text("No.")),
+      ),
+    ])
+  ];
+  wrongWords.asMap().forEach((int index, wrongWord) {
+    wrongTableRowList.add(TableRow(children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Center(child: Text(wrongWord["あなたの答え"])),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Center(child: Text(wrongWord["英単語"])),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Center(child: Text(wrongWord["意味"])),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Center(child: Text(wrongWord["No."])),
+      ),
+    ]));
+  });
+  return wrongTableRowList;
 }

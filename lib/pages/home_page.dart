@@ -1,4 +1,4 @@
-import 'package:eitango_test_flutter/components/MySnackBar.dart';
+import 'package:eitango_test_flutter/components/mySnackBar.dart';
 import 'package:eitango_test_flutter/components/word_name_form_field.dart';
 import 'package:eitango_test_flutter/constants/device.dart';
 import 'package:eitango_test_flutter/model/word.dart';
@@ -39,22 +39,26 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: FutureBuilder(
-          future: getAllBookNames(),
-          builder:
-              (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-            List<String>? bookNameList = snapshot.data;
-            if (snapshot.connectionState == ConnectionState.waiting ||
-                !snapshot.hasData) {
-              return const CircularProgressIndicator();
-            } else {
-              return Padding(
+      body: FutureBuilder(
+        future: getAllBookNames(),
+        builder:
+            (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+          List<String>? bookNameList = snapshot.data;
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              !snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return SingleChildScrollView(
+              reverse: true,
+              child: Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: Column(children: <Widget>[
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10.0),
                     child: ElevatedButton(
@@ -67,7 +71,8 @@ class _HomePageState extends State<HomePage> {
                                   builder: (context) =>
                                       TestPage(words: words)));
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(context, "苦手単語は見つかりません"));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              mySnackBar(context, "苦手単語は見つかりません"));
                         }
                       },
                       child: const Text("全ての苦手単語をテストする"),
@@ -132,14 +137,15 @@ class _HomePageState extends State<HomePage> {
                                         int.parse(lastNumController.text),
                                         isCheckedWeak);
                                     if (words.isNotEmpty) {
-                                      Navigator.push(
+                                      await Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   TestPage(words: words)));
                                     } else {
                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(mySnackBar(context, "範囲内に単語は見つかりません"));
+                                          .showSnackBar(mySnackBar(
+                                              context, "範囲内に単語は見つかりません"));
                                     }
                                   }
                                 },
@@ -150,10 +156,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ]),
-              );
-            }
-          },
-        ),
+              ),
+            );
+          }
+        },
       ),
     );
   }
@@ -176,16 +182,30 @@ class _IsWeakCheckFieldState extends State<IsWeakCheckField> {
   bool isCheckedWeak = false;
 
   @override
+  void initState() {
+    super.initState();
+    setState(() {
+      isCheckedWeak = widget.isCheckedWeek;
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    isCheckedWeak = widget.isCheckedWeek;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Checkbox(
             value: isCheckedWeak,
             onChanged: (bool? value) {
+              widget.changeIsCheckedWeak();
               setState(() {
                 isCheckedWeak = value!;
               });
-              widget.changeIsCheckedWeak();
             }),
         const Text("苦手だけ(間違ったままの問題が出題されます。)")
       ],

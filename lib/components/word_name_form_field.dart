@@ -23,7 +23,7 @@ Widget wordNumFormField(bool isFirst, TextEditingController mainController,
             icon: const Icon(Icons.remove),
             onPressed: () {
               mainController.text = int.parse(mainController.text) > subtractNum
-                  ? "${int.parse(mainController.text) - subtractNum}"
+                  ? "${int.parse(mainController.text) - 1}"
                   : "$subtractNum";
             },
           ),
