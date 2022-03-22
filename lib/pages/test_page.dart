@@ -97,7 +97,7 @@ class _TestPageState extends State<TestPage> {
                                     onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
                                         try {
-                                          await postIsCorrect();
+                                          postIsCorrect();
                                           await Navigator.push(
                                               context,
                                               MaterialPageRoute(

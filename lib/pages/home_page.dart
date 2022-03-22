@@ -45,8 +45,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: FutureBuilder(
         future: getAllBookNames(),
-        builder:
-            (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
           List<String>? bookNameList = snapshot.data;
           if (snapshot.connectionState == ConnectionState.waiting ||
               !snapshot.hasData) {
@@ -57,105 +56,109 @@ class _HomePageState extends State<HomePage> {
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        words = await API.getAllWeekWords();
-                        if (words.isNotEmpty) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      TestPage(words: words)));
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              mySnackBar(context, "苦手単語は見つかりません"));
-                        }
-                      },
-                      child: const Text("全ての苦手単語をテストする"),
-                    ),
-                  ),
-                  const Text(
-                    "テスト情報を入力してください",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  Form(
-                    key: _formKey,
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 16),
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(6),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            words = await API.getAllWeekWords();
+                            if (words.isNotEmpty) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          TestPage(words: words)));
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  mySnackBar(context, "苦手単語は見つかりません"));
+                            }
+                          },
+                          child: const Text("全ての苦手単語をテストする"),
+                        ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          DropdownButtonFormField(
-                            decoration: const InputDecoration(
-                              labelText: "単語帳名",
-                            ),
-                            value: bookName,
-                            icon: const Icon(Icons.arrow_drop_down),
-                            onChanged: (String? newValue) {
-                              bookName = newValue!;
-                            },
-                            items: bookNameList!
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                  alignment: AlignmentDirectional.centerStart,
-                                  value: value,
-                                  child: SingleChildScrollView(
-                                    child: Container(
-                                        constraints: BoxConstraints(
-                                          maxWidth:
-                                              DeviceInfo.width(context) * 0.8,
-                                        ),
-                                        child: Text(value)),
-                                  ));
-                            }).toList(),
+                      const Text(
+                        "テスト情報を入力してください",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      Form(
+                        key: _formKey,
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 16),
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(6),
                           ),
-                          wordNumFormField(
-                              true, firstNumController, lastNumController),
-                          wordNumFormField(
-                              false, lastNumController, firstNumController),
-                          IsWeakCheckField(
-                            isCheckedWeek: isCheckedWeak,
-                            changeIsCheckedWeak: changeIsCheckedWeak,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10.0),
-                            child: ElevatedButton(
-                                onPressed: () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    words = await API.getTestWords(
-                                        bookName,
-                                        int.parse(firstNumController.text),
-                                        int.parse(lastNumController.text),
-                                        isCheckedWeak);
-                                    if (words.isNotEmpty) {
-                                      await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  TestPage(words: words)));
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(mySnackBar(
-                                              context, "範囲内に単語は見つかりません"));
-                                    }
-                                  }
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              DropdownButtonFormField(
+                                decoration: const InputDecoration(
+                                  labelText: "単語帳名",
+                                ),
+                                value: bookName,
+                                icon: const Icon(Icons.arrow_drop_down),
+                                onChanged: (String? newValue) {
+                                  bookName = newValue!;
                                 },
-                                child: const Text("テストを作成")),
+                                items: bookNameList!
+                                    .map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                  return DropdownMenuItem<String>(
+                                      alignment:
+                                          AlignmentDirectional.centerStart,
+                                      value: value,
+                                      child: SingleChildScrollView(
+                                        child: Container(
+                                            constraints: BoxConstraints(
+                                              maxWidth:
+                                                  DeviceInfo.width(context) *
+                                                      0.8,
+                                            ),
+                                            child: Text(value)),
+                                      ));
+                                }).toList(),
+                              ),
+                              wordNumFormField(
+                                  true, firstNumController, lastNumController),
+                              wordNumFormField(
+                                  false, lastNumController, firstNumController),
+                              IsWeakCheckField(
+                                isCheckedWeek: isCheckedWeak,
+                                changeIsCheckedWeak: changeIsCheckedWeak,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10.0),
+                                child: ElevatedButton(
+                                    onPressed: () async {
+                                      if (_formKey.currentState!.validate()) {
+                                        words = await API.getTestWords(
+                                            bookName,
+                                            int.parse(firstNumController.text),
+                                            int.parse(lastNumController.text),
+                                            isCheckedWeak);
+                                        if (words.isNotEmpty) {
+                                          await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      TestPage(words: words)));
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(mySnackBar(
+                                                  context, "範囲内に単語は見つかりません"));
+                                        }
+                                      }
+                                    },
+                                    child: const Text("テストを作成")),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                ]),
+                    ]),
               ),
             );
           }
@@ -207,7 +210,10 @@ class _IsWeakCheckFieldState extends State<IsWeakCheckField> {
                 isCheckedWeak = value!;
               });
             }),
-        const Text("苦手だけ(間違ったままの問題が出題されます。)")
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [Text("苦手だけ"), Text("(間違ったままの問題が出題されます。)")],
+        ),
       ],
     );
   }

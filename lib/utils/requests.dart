@@ -33,6 +33,9 @@ class API {
     Map<String, String> headers = {'content-type': 'application/json'};
     String body = json.encode(isCorrectListOfDict);
     var res = await http.post(urlIsCorrect, headers: headers, body: body);
+    print(res);
+    print(res.statusCode);
+    print(res.body);
     if (res.statusCode != 200) {
       throw Exception("正当を正常に送信できませんでした。");
     }

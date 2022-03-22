@@ -19,42 +19,47 @@ class _ResultPageState extends State<ResultPage> {
 
     return Scaffold(
         appBar: AppBar(title: const Text("Your Score!")),
-        body: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Center(
-              child: Column(
-            children: [
-              Container(
-                  margin: const EdgeInsets.symmetric(vertical: 16.0),
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  decoration: BoxDecoration(
-                    color: isPerfect ? Colors.greenAccent : Colors.redAccent,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  width: DeviceInfo.width(context) * 3 / 4,
-                  child: Center(
-                      child: Text(
-                    isPerfect ? "全問正解!!" : widget.scoreText,
-                    style: const TextStyle(fontSize: 20),
-                  ))),
-              !isPerfect
-                  ? Column(children: [
-                      const Text(
-                        "間違えた単語",
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 30.0),
-                        child: Table(
-                            border: TableBorder.all(),
-                            children: wrongTableRows(widget.wrongWords)),
-                      ),
-                      const Text("間違えた問題は繰り返し復讐しましょう。")
-                    ])
-                  : Container()
-            ],
-          )),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Center(
+                child: Column(
+              children: [
+                Container(
+                    margin: const EdgeInsets.symmetric(vertical: 16.0),
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    decoration: BoxDecoration(
+                      color: isPerfect ? Colors.greenAccent : Colors.redAccent,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    width: DeviceInfo.width(context) * 3 / 4,
+                    child: Center(
+                        child: Text(
+                      isPerfect ? "全問正解!!" : widget.scoreText,
+                      style: const TextStyle(fontSize: 20),
+                    ))),
+                !isPerfect
+                    ? Column(children: [
+                        const Text(
+                          "間違えた単語",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 30.0),
+                          child: Table(
+                              border: TableBorder.all(),
+                              children: wrongTableRows(widget.wrongWords)),
+                        ),
+                        const Text("間違えた問題は繰り返し復讐しましょう。"),
+                        const SizedBox(
+                          height: 20,
+                        )
+                      ])
+                    : Container()
+              ],
+            )),
+          ),
         ));
   }
 }
