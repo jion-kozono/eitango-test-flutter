@@ -11,9 +11,7 @@ class API {
 
   static Future<List<String>> getAllBookNames() async {
     Uri urlBooks = Uri.parse('$apiUrl/books/');
-    print(urlBooks);
-    var res = await http.get(urlBooks, headers: {'Access-Control-Allow-Origin': '*', "Accept":"application/json"});
-    print(res);
+    var res = await http.get(urlBooks);
     if (res.statusCode == 200) {
       String responseBody = utf8.decode(res.bodyBytes);
       var jsonResponse = json.decode(responseBody).cast<String>();
