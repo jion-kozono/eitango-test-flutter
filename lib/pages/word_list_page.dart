@@ -21,6 +21,7 @@ class _WordListPageState extends State<WordListPage> {
     initIsVisible();
   }
 
+  // 全て不可視化
   void initIsVisible() {
     isVisibleList = widget.words.map((word) => false).toList();
   }
