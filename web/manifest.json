@@ -1,6 +1,6 @@
 {
-    "name": "英単語テスト",
-    "short_name": "英単語テスト",
+    "name": "英単語学習",
+    "short_name": "英単語学習",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

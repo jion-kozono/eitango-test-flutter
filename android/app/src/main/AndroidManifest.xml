@@ -2,7 +2,7 @@
     package="com.example.eitango_test_flutter">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="英単語テスト"
+        android:label="英単語学習"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

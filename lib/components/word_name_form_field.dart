@@ -31,6 +31,9 @@ Widget wordNumFormField(bool isFirst, TextEditingController mainController,
       ),
     ),
     validator: (value) {
+      if (value == "") {
+        return "単語番号を入力してください";
+      }
       // 最初の単語番号と最後の単語番号を比較して最初の単語番号の方が大きい場合
       if (!isFirst &&
           int.parse(mainController.text) <=

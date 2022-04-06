@@ -13,12 +13,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: '英単語テストアプリ',
+      title: '英単語学習アプリ',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(title: '英単語テストアプリ'),
+      home: const HomePage(title: '英単語学習アプリ'),
     );
   }
 }
-

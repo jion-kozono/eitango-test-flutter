@@ -3,6 +3,7 @@ import 'package:eitango_test_flutter/components/word_name_form_field.dart';
 import 'package:eitango_test_flutter/constants/device.dart';
 import 'package:eitango_test_flutter/model/word.dart';
 import 'package:eitango_test_flutter/pages/test_page.dart';
+import 'package:eitango_test_flutter/pages/word_list_page.dart';
 import 'package:eitango_test_flutter/utils/requests.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   int initialValue = 1;
   String bookName = "";
   bool isCheckedWeak = false;
+  bool isDisabled = false;
   late TextEditingController firstNumController =
       TextEditingController(text: "$initialValue");
   late TextEditingController lastNumController =
@@ -30,10 +32,56 @@ class _HomePageState extends State<HomePage> {
     isCheckedWeak = !isCheckedWeak;
   }
 
+  void changeButtonStatus() {
+    setState(() {
+      isDisabled = !isDisabled;
+    });
+  }
+
   Future<List<String>> getAllBookNames() async {
     List<String> bookNameList = await API.getAllBookNames();
     bookName = bookNameList[0];
     return bookNameList;
+  }
+
+  Future<void> onSubmitForm(bool isTest) async {
+    if (_formKey.currentState!.validate()) {
+      changeButtonStatus();
+      words = await API.getTestWords(
+          bookName,
+          int.parse(firstNumController.text),
+          int.parse(lastNumController.text),
+          isCheckedWeak);
+      if (words.isNotEmpty) {
+        await Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => isTest
+                    ? TestPage(words: words)
+                    : WordListPage(words: words)));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(mySnackBar(context, "範囲内に単語は見つかりません"));
+      }
+      changeButtonStatus();
+    }
+  }
+
+  Future<void> onPressedToGetWeekWords(bool isTest) async {
+    changeButtonStatus();
+    words = await API.getAllWeekWords();
+    if (words.isNotEmpty) {
+      await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => isTest
+                  ? TestPage(words: words)
+                  : WordListPage(words: words)));
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(mySnackBar(context, "苦手単語は見つかりません"));
+    }
+    changeButtonStatus();
   }
 
   @override
@@ -58,27 +106,8 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            words = await API.getAllWeekWords();
-                            if (words.isNotEmpty) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          TestPage(words: words)));
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  mySnackBar(context, "苦手単語は見つかりません"));
-                            }
-                          },
-                          child: const Text("全ての苦手単語をテストする"),
-                        ),
-                      ),
                       const Text(
-                        "テスト情報を入力してください",
+                        "単語範囲を入力してください",
                         style: TextStyle(fontSize: 18),
                       ),
                       Form(
@@ -128,35 +157,70 @@ class _HomePageState extends State<HomePage> {
                                 isCheckedWeek: isCheckedWeak,
                                 changeIsCheckedWeak: changeIsCheckedWeak,
                               ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 10.0),
-                                child: ElevatedButton(
-                                    onPressed: () async {
-                                      if (_formKey.currentState!.validate()) {
-                                        words = await API.getTestWords(
-                                            bookName,
-                                            int.parse(firstNumController.text),
-                                            int.parse(lastNumController.text),
-                                            isCheckedWeak);
-                                        if (words.isNotEmpty) {
-                                          await Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      TestPage(words: words)));
-                                        } else {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(mySnackBar(
-                                                  context, "範囲内に単語は見つかりません"));
-                                        }
-                                      }
-                                    },
-                                    child: const Text("テストを作成")),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10.0),
+                                    child: ElevatedButton(
+                                        onPressed: isDisabled
+                                            ? null
+                                            : () async {
+                                                await onSubmitForm(false);
+                                              },
+                                        child: const Text("単語を学習")),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10.0),
+                                    child: ElevatedButton(
+                                        onPressed: isDisabled
+                                            ? null
+                                            : () async {
+                                                await onSubmitForm(true);
+                                              },
+                                        child: const Text("テストを作成")),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         ),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: ElevatedButton(
+                              onPressed: isDisabled
+                                  ? null
+                                  : () async {
+                                      await onPressedToGetWeekWords(false);
+                                    },
+                              child: const Text("全苦手単語を学習"),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: ElevatedButton(
+                              onPressed: isDisabled
+                                  ? null
+                                  : () async {
+                                      await onPressedToGetWeekWords(true);
+                                    },
+                              child: const Text("全苦手単語をテスト"),
+                            ),
+                          ),
+                        ],
                       ),
                     ]),
               ),
@@ -200,21 +264,24 @@ class _IsWeakCheckFieldState extends State<IsWeakCheckField> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Checkbox(
-            value: isCheckedWeak,
-            onChanged: (bool? value) {
-              widget.changeIsCheckedWeak();
-              setState(() {
-                isCheckedWeak = value!;
-              });
-            }),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [Text("苦手だけ"), Text("(間違ったままの問題が出題されます。)")],
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(top: 10.0),
+      child: Row(
+        children: [
+          Checkbox(
+              value: isCheckedWeak,
+              onChanged: (bool? value) {
+                widget.changeIsCheckedWeak();
+                setState(() {
+                  isCheckedWeak = value!;
+                });
+              }),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [Text("苦手だけ"), Text("(間違ったままの問題が出題されます)")],
+          ),
+        ],
+      ),
     );
   }
 }
