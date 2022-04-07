@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> onSubmitForm(bool isTest) async {
     if (_formKey.currentState!.validate()) {
       changeButtonStatus();
-      words = await API.getTestWords(
+      words = await API.getRangeWords(
           bookName,
           int.parse(firstNumController.text),
           int.parse(lastNumController.text),

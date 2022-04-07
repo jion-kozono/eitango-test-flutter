@@ -22,7 +22,7 @@ class API {
     }
   }
 
-  static Future<List<Word>> getTestWords(
+  static Future<List<Word>> getRangeWords(
       String bookName, int firstNum, int lastNum, bool isOnlyWeak) async {
     Uri urlTestWords = Uri.parse(
         '$apiUrl/words/$bookName?first=$firstNum&last=$lastNum&is_only_week=$isOnlyWeak');
