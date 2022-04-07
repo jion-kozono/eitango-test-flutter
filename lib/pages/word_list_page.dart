@@ -1,6 +1,9 @@
 import 'package:eitango_test_flutter/constants/device.dart';
 import 'package:eitango_test_flutter/model/word.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class WordListPage extends StatefulWidget {
   final List<Word> words;
@@ -12,31 +15,62 @@ class WordListPage extends StatefulWidget {
 }
 
 class _WordListPageState extends State<WordListPage> {
+  late FlutterTts flutterTts;
   List<bool> isVisibleList = [];
   bool isFromWord = false;
+  String? engine;
+
+  bool get isIOS => !kIsWeb && Platform.isIOS;
+  bool get isAndroid => !kIsWeb && Platform.isAndroid;
+  bool get isWeb => kIsWeb;
 
   @override
   void initState() {
     super.initState();
-    initIsVisible();
+    initTts();
+    _initIsVisible();
+  }
+
+  Future _setAwaitOptions() async {
+    await flutterTts.awaitSpeakCompletion(true);
+  }
+
+  Future _getDefaultEngine() async {
+    await flutterTts.getDefaultEngine;
+  }
+
+  initTts() {
+    flutterTts = FlutterTts();
+    _setAwaitOptions();
+    if (isAndroid) {
+      _getDefaultEngine();
+    }
   }
 
   // 全て不可視化
-  void initIsVisible() {
+  void _initIsVisible() {
     isVisibleList = widget.words.map((word) => false).toList();
   }
 
-  void changeIsVisibleByIndex(int index) {
+  void _changeIsVisibleByIndex(int index) {
     setState(() {
       isVisibleList[index] = !isVisibleList[index];
     });
   }
 
-  void changeIsFromWord() {
+  void _changeIsFromWord() {
     setState(() {
-      initIsVisible();
+      _initIsVisible();
       isFromWord = !isFromWord;
     });
+  }
+
+  Future<void> _speakWord(String word) async {
+    await flutterTts.setLanguage("en-US");
+    await flutterTts.setSpeechRate(0.9);
+    await flutterTts.setVolume(1.0);
+    await flutterTts.setPitch(1.0);
+    await flutterTts.speak(word);
   }
 
   Map<String, String> buttonText = {
@@ -65,7 +99,7 @@ class _WordListPageState extends State<WordListPage> {
                         ? buttonText["fromWord"]!
                         : buttonText["fromMeaning"]!),
                     onPressed: () {
-                      changeIsFromWord();
+                      _changeIsFromWord();
                     },
                   ),
                 ],
@@ -110,7 +144,13 @@ class _WordListPageState extends State<WordListPage> {
                                     ? const Icon(Icons.visibility)
                                     : const Icon(Icons.visibility_off),
                                 onPressed: () {
-                                  changeIsVisibleByIndex(index);
+                                  _changeIsVisibleByIndex(index);
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.play_arrow),
+                                onPressed: () async {
+                                  await _speakWord(words[index].word);
                                 },
                               ),
                             ],
