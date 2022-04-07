@@ -67,7 +67,7 @@ class _WordListPageState extends State<WordListPage> {
 
   Future<void> _speakWord(String word) async {
     await flutterTts.setLanguage("en-US");
-    await flutterTts.setSpeechRate(0.9);
+    await flutterTts.setSpeechRate(0.7);
     await flutterTts.setVolume(1.0);
     await flutterTts.setPitch(1.0);
     await flutterTts.speak(word);

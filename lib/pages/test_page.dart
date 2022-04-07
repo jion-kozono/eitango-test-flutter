@@ -82,6 +82,8 @@ class _TestPageState extends State<TestPage> {
                         child: TextFormField(
                           key: Key(index.toString()),
                           controller: controllerList[index],
+                          enableSuggestions: false,
+                          keyboardType: TextInputType.visiblePassword,
                           decoration: InputDecoration(
                               border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
