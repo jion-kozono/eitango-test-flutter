@@ -1,5 +1,6 @@
 import 'package:eitango_test_flutter/constants/device.dart';
 import 'package:eitango_test_flutter/model/word.dart';
+import 'package:eitango_test_flutter/utils/split_example.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:io' show Platform;
@@ -110,6 +111,12 @@ class _WordListPageState extends State<WordListPage> {
                   itemCount: words.length,
                   padding: const EdgeInsets.only(bottom: 30),
                   itemBuilder: (BuildContext context, int index) {
+                    List<Map<String, String>> exampleAndTranslationList =
+                        words[index].example != ""
+                            ? Utils.getListFromExample(
+                                words[index].example, words[index].translation)
+                            : [];
+                    print(exampleAndTranslationList);
                     return Container(
                       key: Key(index.toString()),
                       alignment: Alignment.center,
@@ -120,57 +127,89 @@ class _WordListPageState extends State<WordListPage> {
                         border: Border.all(color: Colors.black),
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
                         children: [
-                          Flexible(
-                            flex: 4,
-                            child: Text(
-                              "${index + 1}. ${isFromWord ? words[index].word : words[index].meaning}",
-                              style: const TextStyle(fontSize: 14),
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                flex: 4,
+                                child: Text(
+                                  "${index + 1}. ${isFromWord ? words[index].word : words[index].meaning}",
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                              Flexible(
+                                flex: 3,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Flexible(
+                                      flex: 3,
+                                      child: Text(
+                                        isVisibleList[index]
+                                            ? isFromWord
+                                                ? words[index].meaning
+                                                : words[index].word
+                                            : isFromWord
+                                                ? "meaning"
+                                                : "word",
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                    ),
+                                    Flexible(
+                                      flex: 1,
+                                      child: IconButton(
+                                        icon: isVisibleList[index]
+                                            ? const Icon(Icons.visibility)
+                                            : const Icon(Icons.visibility_off),
+                                        onPressed: () {
+                                          _changeIsVisibleByIndex(index);
+                                        },
+                                      ),
+                                    ),
+                                    Flexible(
+                                      flex: 1,
+                                      child: IconButton(
+                                        icon: const Icon(Icons.play_arrow),
+                                        onPressed: () async {
+                                          await _speakWord(words[index].word);
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                          Flexible(
-                            flex: 3,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Flexible(
-                                  flex: 3,
-                                  child: Text(
-                                    isVisibleList[index]
-                                        ? isFromWord
-                                            ? words[index].meaning
-                                            : words[index].word
-                                        : isFromWord
-                                            ? "meaning"
-                                            : "word",
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                ),
-                                Flexible(
-                                  flex: 1,
-                                  child: IconButton(
-                                    icon: isVisibleList[index]
-                                        ? const Icon(Icons.visibility)
-                                        : const Icon(Icons.visibility_off),
-                                    onPressed: () {
-                                      _changeIsVisibleByIndex(index);
-                                    },
-                                  ),
-                                ),
-                                Flexible(
-                                  flex: 1,
-                                  child: IconButton(
-                                    icon: const Icon(Icons.play_arrow),
-                                    onPressed: () async {
-                                      await _speakWord(words[index].word);
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          exampleAndTranslationList.isNotEmpty
+                              ? ExpansionTile(
+                                  title: const Text('Example'),
+                                  children: exampleAndTranslationList
+                                      .map(
+                                        (e) => Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Flexible(
+                                                flex: 6,
+                                                child: Text(
+                                                    e["example"] as String)),
+                                            Flexible(
+                                                flex: 2, child: Container()),
+                                            Flexible(
+                                                flex: 6,
+                                                child: Text(
+                                                  e["translation"] as String,
+                                                  textAlign: TextAlign.start,
+                                                ))
+                                          ],
+                                        ),
+                                      )
+                                      .toList())
+                              : Container(),
                         ],
                       ),
                     );
