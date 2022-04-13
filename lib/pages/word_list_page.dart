@@ -116,7 +116,6 @@ class _WordListPageState extends State<WordListPage> {
                             ? Utils.getListFromExample(
                                 words[index].example, words[index].translation)
                             : [];
-                    print(exampleAndTranslationList);
                     return Container(
                       key: Key(index.toString()),
                       alignment: Alignment.center,
@@ -185,25 +184,34 @@ class _WordListPageState extends State<WordListPage> {
                           exampleAndTranslationList.isNotEmpty
                               ? ExpansionTile(
                                   title: const Text('Example'),
+                                  tilePadding: EdgeInsets.zero,
                                   children: exampleAndTranslationList
                                       .map(
                                         (e) => Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
                                           children: [
                                             Flexible(
-                                                flex: 6,
+                                                flex: 8,
                                                 child: Text(
                                                     e["example"] as String)),
                                             Flexible(
-                                                flex: 2, child: Container()),
+                                              flex: 2,
+                                              child: IconButton(
+                                                icon: const Icon(
+                                                    Icons.play_arrow),
+                                                onPressed: () async {
+                                                  await _speakWord(
+                                                      e["example"] as String);
+                                                },
+                                              ),
+                                            ),
+                                            Flexible(
+                                                flex: 1, child: Container()),
                                             Flexible(
                                                 flex: 6,
                                                 child: Text(
                                                   e["translation"] as String,
-                                                  textAlign: TextAlign.start,
                                                 ))
                                           ],
                                         ),

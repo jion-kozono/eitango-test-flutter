@@ -1,4 +1,4 @@
-import 'package:eitango_test_flutter/components/mySnackBar.dart';
+import 'package:eitango_test_flutter/components/my_snack_bar.dart';
 import 'package:eitango_test_flutter/components/word_name_form_field.dart';
 import 'package:eitango_test_flutter/constants/device.dart';
 import 'package:eitango_test_flutter/model/word.dart';
