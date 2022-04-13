@@ -123,37 +123,53 @@ class _WordListPageState extends State<WordListPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            "${index + 1}. ${isFromWord ? words[index].word : words[index].meaning}",
-                            style: const TextStyle(fontSize: 16),
+                          Flexible(
+                            flex: 4,
+                            child: Text(
+                              "${index + 1}. ${isFromWord ? words[index].word : words[index].meaning}",
+                              style: const TextStyle(fontSize: 14),
+                            ),
                           ),
-                          Row(
-                            children: [
-                              Text(
-                                isVisibleList[index]
-                                    ? isFromWord
-                                        ? words[index].meaning
-                                        : words[index].word
-                                    : isFromWord
-                                        ? "meaning"
-                                        : "word",
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              IconButton(
-                                icon: isVisibleList[index]
-                                    ? const Icon(Icons.visibility)
-                                    : const Icon(Icons.visibility_off),
-                                onPressed: () {
-                                  _changeIsVisibleByIndex(index);
-                                },
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.play_arrow),
-                                onPressed: () async {
-                                  await _speakWord(words[index].word);
-                                },
-                              ),
-                            ],
+                          Flexible(
+                            flex: 3,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Flexible(
+                                  flex: 3,
+                                  child: Text(
+                                    isVisibleList[index]
+                                        ? isFromWord
+                                            ? words[index].meaning
+                                            : words[index].word
+                                        : isFromWord
+                                            ? "meaning"
+                                            : "word",
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ),
+                                Flexible(
+                                  flex: 1,
+                                  child: IconButton(
+                                    icon: isVisibleList[index]
+                                        ? const Icon(Icons.visibility)
+                                        : const Icon(Icons.visibility_off),
+                                    onPressed: () {
+                                      _changeIsVisibleByIndex(index);
+                                    },
+                                  ),
+                                ),
+                                Flexible(
+                                  flex: 1,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.play_arrow),
+                                    onPressed: () async {
+                                      await _speakWord(words[index].word);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
