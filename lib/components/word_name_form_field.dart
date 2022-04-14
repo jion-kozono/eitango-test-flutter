@@ -36,9 +36,9 @@ Widget wordNumFormField(bool isFirst, TextEditingController mainController,
       }
       // 最初の単語番号と最後の単語番号を比較して最初の単語番号の方が大きい場合
       if (!isFirst &&
-          int.parse(mainController.text) <=
+          int.parse(mainController.text) <
               int.parse(controllerToCompare.text)) {
-        return '最後の単語番号の方が大きい必要があります';
+        return '最後の単語番号が同じが大きい必要があります';
       }
       return null;
     },

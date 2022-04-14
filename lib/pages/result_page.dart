@@ -73,15 +73,15 @@ List<TableRow> wrongTableRows(List<Map<String, dynamic>> wrongWords) {
       ),
       Padding(
         padding: EdgeInsets.symmetric(vertical: 8.0),
+        child: Center(child: Text("問")),
+      ),
+      Padding(
+        padding: EdgeInsets.symmetric(vertical: 8.0),
+        child: Center(child: Text("答")),
+      ),
+      Padding(
+        padding: EdgeInsets.symmetric(vertical: 8.0),
         child: Center(child: Text("英単語")),
-      ),
-      Padding(
-        padding: EdgeInsets.symmetric(vertical: 8.0),
-        child: Center(child: Text("意味")),
-      ),
-      Padding(
-        padding: EdgeInsets.symmetric(vertical: 8.0),
-        child: Center(child: Text("No.")),
       ),
     ])
   ];
@@ -93,15 +93,15 @@ List<TableRow> wrongTableRows(List<Map<String, dynamic>> wrongWords) {
       ),
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Center(child: Text(wrongWord["問"])),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Center(child: Text(wrongWord["答"])),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Center(child: Text(wrongWord["英単語"])),
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Center(child: Text(wrongWord["意味"])),
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Center(child: Text(wrongWord["No."])),
       ),
     ]));
   });
